@@ -1,6 +1,6 @@
 @font-face {
   font-family: "JasonHandwriting2";
-  src: url("JasonHandwriting2.ttf") format("truetype");
+  src: url("./JasonHandwriting2.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
