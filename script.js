@@ -83,11 +83,52 @@
             }
           });
         },
-        { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
+        { threshold: 0.05, rootMargin: "40px 0px 40px 0px" }
       );
       observer.observe(memoryEl);
+      requestAnimationFrame(() => {
+        const rect = memoryEl.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          reveal();
+          observer.disconnect();
+        }
+      });
     } else {
       reveal();
     }
+  }
+
+  // IG / mobile: unmuted autoplay is usually blocked until a tap.
+  // Start muted, then unlock to medium volume on first interaction.
+  const video = document.getElementById("memory-video");
+  const DEFAULT_VOLUME = 0.5;
+  let audioUnlocked = false;
+
+  function tryPlay() {
+    if (!video) return;
+    const p = video.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
+  }
+
+  function unlockAudio() {
+    if (!video || audioUnlocked) return;
+    audioUnlocked = true;
+    video.muted = false;
+    video.volume = DEFAULT_VOLUME;
+    tryPlay();
+    document.body.classList.add("audio-on");
+  }
+
+  if (video) {
+    video.muted = true;
+    video.volume = DEFAULT_VOLUME;
+    tryPlay();
+    video.addEventListener("loadeddata", tryPlay);
+
+    // First tap anywhere on the page (works in Instagram in-app browser)
+    const unlockOnce = () => unlockAudio();
+    ["pointerdown", "touchstart", "click"].forEach((evt) => {
+      document.addEventListener(evt, unlockOnce, { once: true, capture: true });
+    });
   }
 })();

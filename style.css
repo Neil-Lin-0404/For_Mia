@@ -422,13 +422,26 @@ body {
   font-weight: normal;
   letter-spacing: 0.14em;
   color: var(--ink-soft);
-  margin-bottom: clamp(0.75rem, 2.5vw, 1rem);
+  margin-bottom: 0.35rem;
+}
+
+.audio-hint {
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+  letter-spacing: 0.1em;
+  color: var(--taro-deep);
+  margin-bottom: 0.55rem;
+  animation: hint-pulse 1.8s ease-in-out infinite;
+}
+
+body.audio-on .audio-hint {
+  display: none;
 }
 
 .memory-frame {
   position: relative;
   border-radius: 18px;
   padding: 3px;
+  cursor: pointer;
   background: linear-gradient(
     145deg,
     rgba(196, 164, 200, 0.55),
@@ -486,6 +499,16 @@ body {
   }
 }
 
+@keyframes hint-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 480px) {
   .page {
     padding-top: clamp(2rem, 10vh, 3.5rem);
@@ -516,6 +539,7 @@ body {
   .flame-core,
   .title,
   .celebrate,
+  .audio-hint,
   .memory-frame,
   .memory-frame::before {
     animation: none !important;
