@@ -403,8 +403,8 @@ body {
 }
 
 .memory {
-  width: min(100%, 360px);
-  margin-top: clamp(0.5rem, 2vw, 0.9rem);
+  width: min(100%, 420px);
+  margin-top: clamp(0.8rem, 3vw, 1.4rem);
   opacity: 0;
   transform: translateY(28px);
   transition:
@@ -418,40 +418,35 @@ body {
 }
 
 .memory-title {
-  font-size: clamp(1.35rem, 5vw, 1.7rem);
+  font-size: clamp(1.25rem, 4.5vw, 1.55rem);
   font-weight: normal;
   letter-spacing: 0.14em;
   color: var(--ink-soft);
-  margin-bottom: 0.28rem;
+  margin-bottom: clamp(0.75rem, 2.5vw, 1rem);
 }
 
-/*
-  Video is 2160x1080; voice bar roughly x 209–1951, y 403–614 (center ~47%).
-  Clip to the colored strip only — no native video chrome.
-*/
 .memory-frame {
   position: relative;
-  z-index: 10;
-  width: 100%;
-  aspect-ratio: 1743 / 500;
-  max-height: 100px;
-  overflow: hidden;
-  border-radius: 14px;
-  cursor: pointer;
-  background: #0a0a12;
-  box-shadow: 0 0 0 1px rgba(196, 164, 200, 0.28);
+  border-radius: 18px;
+  padding: 3px;
+  background: linear-gradient(
+    145deg,
+    rgba(196, 164, 200, 0.55),
+    rgba(243, 232, 220, 0.9) 45%,
+    rgba(160, 122, 168, 0.45)
+  );
   animation: frame-glow 4.5s ease-in-out infinite;
 }
 
 .memory-frame::before {
   content: "";
   position: absolute;
-  inset: -8px;
-  border-radius: 18px;
+  inset: -6px;
+  border-radius: 22px;
   background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(196, 164, 200, 0.2),
-    transparent 68%
+    ellipse at 50% 40%,
+    rgba(196, 164, 200, 0.28),
+    transparent 70%
   );
   z-index: -1;
   pointer-events: none;
@@ -459,18 +454,14 @@ body {
 }
 
 .memory-video {
-  position: absolute;
-  left: 50%;
-  top: 47%;
-  /* Zoom so the bar fills the frame (bar ≈ 1743/2160 wide) */
-  width: 124%;
+  display: block;
+  width: 100%;
   height: auto;
-  max-width: none;
-  transform: translate(-50%, -50%);
-  border-radius: 0;
-  background: #0a0a12;
-  pointer-events: none;
-  -webkit-appearance: none;
+  max-height: min(58vh, 520px);
+  object-fit: cover;
+  border-radius: 15px;
+  background: #ebe4dc;
+  vertical-align: middle;
 }
 
 @keyframes frame-glow {
@@ -507,7 +498,7 @@ body {
   }
 
   .memory {
-    width: min(100%, 340px);
+    width: min(100%, 360px);
   }
 }
 
