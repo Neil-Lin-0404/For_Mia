@@ -68,4 +68,26 @@
 
   updateCountdown();
   setInterval(updateCountdown, 1000);
+
+  const memoryEl = document.getElementById("memory");
+  if (memoryEl) {
+    const reveal = () => memoryEl.classList.add("is-visible");
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              reveal();
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
+      );
+      observer.observe(memoryEl);
+    } else {
+      reveal();
+    }
+  }
 })();
