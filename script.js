@@ -98,37 +98,55 @@
     }
   }
 
-  // IG / mobile: unmuted autoplay is usually blocked until a tap.
-  // Start muted, then unlock to medium volume on first interaction.
+  // Prefer unmuted autoplay at medium volume.
+  // If the browser blocks it (common on IG), show a hint and unlock on first tap.
   const video = document.getElementById("memory-video");
+  const audioHint = document.getElementById("audio-hint");
   const DEFAULT_VOLUME = 0.5;
   let audioUnlocked = false;
 
-  function tryPlay() {
-    if (!video) return;
-    const p = video.play();
-    if (p && typeof p.catch === "function") p.catch(() => {});
+  function markAudioOn() {
+    audioUnlocked = true;
+    document.body.classList.add("audio-on");
+    if (audioHint) audioHint.hidden = true;
   }
 
   function unlockAudio() {
     if (!video || audioUnlocked) return;
-    audioUnlocked = true;
     video.muted = false;
     video.volume = DEFAULT_VOLUME;
-    tryPlay();
-    document.body.classList.add("audio-on");
+    const p = video.play();
+    if (p && typeof p.then === "function") {
+      p.then(markAudioOn).catch(() => {});
+    } else {
+      markAudioOn();
+    }
   }
 
-  if (video) {
-    video.muted = true;
-    video.volume = DEFAULT_VOLUME;
-    tryPlay();
-    video.addEventListener("loadeddata", tryPlay);
-
-    // First tap anywhere on the page (works in Instagram in-app browser)
+  function bindTapUnlock() {
+    if (audioHint) audioHint.hidden = false;
     const unlockOnce = () => unlockAudio();
     ["pointerdown", "touchstart", "click"].forEach((evt) => {
       document.addEventListener(evt, unlockOnce, { once: true, capture: true });
     });
+  }
+
+  if (video) {
+    video.muted = false;
+    video.volume = DEFAULT_VOLUME;
+
+    const start = () => {
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(markAudioOn).catch(bindTapUnlock);
+      } else if (!video.paused) {
+        markAudioOn();
+      } else {
+        bindTapUnlock();
+      }
+    };
+
+    if (video.readyState >= 2) start();
+    else video.addEventListener("loadeddata", start, { once: true });
   }
 })();
