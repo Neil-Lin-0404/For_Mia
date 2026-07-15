@@ -83,11 +83,35 @@
             }
           });
         },
-        { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
+        { threshold: 0.05, rootMargin: "40px 0px 40px 0px" }
       );
       observer.observe(memoryEl);
+      // In case it's already on-screen before observe settles
+      requestAnimationFrame(() => {
+        const rect = memoryEl.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          reveal();
+          observer.disconnect();
+        }
+      });
     } else {
       reveal();
     }
+  }
+
+  const memoryVideo = document.getElementById("memory-video");
+  const memoryFrame = document.querySelector(".memory-frame");
+  if (memoryVideo && memoryFrame) {
+    memoryFrame.addEventListener("click", () => {
+      if (memoryVideo.paused) {
+        memoryVideo.play().catch(() => {});
+      } else {
+        memoryVideo.pause();
+      }
+    });
+    // Nudge muted autoplay after metadata is ready
+    memoryVideo.addEventListener("loadeddata", () => {
+      memoryVideo.play().catch(() => {});
+    });
   }
 })();
